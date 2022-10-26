@@ -24,7 +24,7 @@ function App() {
     const client = createPromiseClient(
         HelloService,
         createConnectTransport({
-            baseUrl: 'http://localhost:3001', //local em-booking-api after skafflolding
+            baseUrl: 'http://localhost:3001', //local em-booking-api after skafflolding (+cors from buf demo if without kong)
         }),
         
     )
