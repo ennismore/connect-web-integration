@@ -4,8 +4,7 @@ import {
     createPromiseClient,
     createConnectTransport,
 } from '@bufbuild/connect-web'
-import { ElizaService } from '../gen/buf/connect/demo/eliza/v1/eliza_connectweb.js'
-import { IntroduceRequest } from '../gen/buf/connect/demo/eliza/v1/eliza_pb.js'
+import { HelloService } from '../gen/hello/v1/hello_connectweb.js'
 
 interface Response {
     text: string
@@ -14,7 +13,6 @@ interface Response {
 
 function App() {
     const [statement, setStatement] = useState<string>('')
-    const [introFinished, setIntroFinished] = useState<boolean>(false)
     const [responses, setResponses] = useState<Response[]>([
         {
             text: 'What is your name?',
@@ -24,39 +22,25 @@ function App() {
 
     // Make the Eliza Service client
     const client = createPromiseClient(
-        ElizaService,
+        HelloService,
         createConnectTransport({
-            baseUrl: 'https://demo.connect.build',
-        })
+            baseUrl: 'http://localhost:3001', //local em-booking-api after skafflolding
+        }),
+        
     )
 
-    const send = async (sentence: string) => {
-        setResponses((resp) => [...resp, { text: sentence, sender: 'user' }])
+    const send = async (message: string) => {
+        setResponses((resp) => [...resp, { text: message, sender: 'user' }])
         setStatement('')
 
-        if (introFinished) {
-            const response = await client.say({
-                sentence,
-            })
+        const response = await client.sayHello({
+            message,
+        })
 
-            setResponses((resp) => [
-                ...resp,
-                { text: response.sentence, sender: 'eliza' },
-            ])
-        } else {
-            const request = new IntroduceRequest({
-                name: sentence,
-            })
-
-            for await (const response of client.introduce(request)) {
-                setResponses((resp) => [
-                    ...resp,
-                    { text: response.sentence, sender: 'eliza' },
-                ])
-            }
-
-            setIntroFinished(true)
-        }
+        setResponses((resp) => [
+            ...resp,
+            { text: response.message, sender: 'eliza' },
+        ])
     }
 
     const handleStatementChange = (

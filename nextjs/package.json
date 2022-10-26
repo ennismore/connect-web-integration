@@ -5,7 +5,7 @@
   "scripts": {
     "start": "next dev",
     "build": "next build",
-    "buf:generate": "buf generate buf.build/bufbuild/eliza",
+    "buf:generate": "buf generate buf.build/ennismore/test",
     "start:production": "next start",
     "lint": "next lint"
   },
